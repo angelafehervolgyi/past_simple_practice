@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Past Simple Practice</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            /* Rainbow background (CSS gradient) */
+            background: linear-gradient(135deg, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #9400d3);
+            background-size: 400% 400%;
+            animation: gradient-animation 15s ease infinite;
+            color: #333;
+        }
+
+        @keyframes gradient-animation {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 40px auto;
+            background-color: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        h1 {
+            text-align: center;
+            color: #004085;
+            margin-bottom: 25px;
+        }
+
+        .score-box {
+            text-align: right;
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #28a745;
+            margin-bottom: 20px;
+            padding: 10px;
+            border: 2px solid #28a745;
+            border-radius: 8px;
+            background-color: #e6ffe6;
+        }
+
+        .task-buttons {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 30px;
+            flex-wrap: wrap; /* Optimized for mobile */
+        }
+
+        .task-button {
+            padding: 10px 15px;
+            font-size: 1em;
+            font-weight: bold;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            transition: background-color 0.3s, transform 0.1s;
+            margin: 5px;
+            flex-grow: 1; /* Better distribution on small screens */
+            min-width: 120px;
+        }
+
+        #fillInButton { background-color: #007bff; color: white; }
+        #fillInButton:hover { background-color: #0056b3; }
+
+        #translationButton { background-color: #28a745; color: white; }
+        #translationButton:hover { background-color: #1e7e34; }
+
+        #wordOrderButton { background-color: #ffc107; color: #333; }
+        #wordOrderButton:hover { background-color: #e0a800; }
+
+        #verbFormsButton { background-color: #dc3545; color: white; }
+        #verbFormsButton:hover { background-color: #bd2130; }
+
+        .task-section {
+            display: none;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            background-color: #f8f9fa;
+        }
+
+        .task-section.active {
+            display: block;
+        }
+
+        .feedback {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 5px;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .feedback.excellent {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .feedback.try-again {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        /* Task specific styles */
+        .task-item {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            margin-bottom: 15px;
+            padding: 10px;
+            border-bottom: 1px dotted #ccc;
+        }
+        
+        .task-item label, .task-item span {
+            font-size: 1.1em;
+            margin-right: 10px;
+            /* Mobile adjustment */
+            flex-basis: 100%;
+            margin-bottom: 5px;
+        }
+        
+        .task-item input[type="text"], .task-item select {
+            padding: 8px;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            margin-right: 10px;
+            width: 100%; /* Full width on mobile */
+            max-width: 300px; /* Max width on desktop */
+            text-align: center;
+            box-sizing: border-box;
+        }
+        
+        .correct-answer {
+            color: #007bff;
+            font-weight: bold;
+            margin-left: 10px;
+            flex-basis: 100%;
+            margin-top: 5px;
+        }
+        
+        .check-button {
+            display: block;
+            width: 80%; /* Wider on mobile */
+            max-width: 300px;
+            margin: 20px auto 0;
+            padding: 12px;
+            background-color: #6f42c1;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .check-button:hover {
+            background-color: #5a37a1;
+        }
+
+        input:disabled {
+            background-color: #eee;
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Past Simple Tense Practice</h1>
+
+    <div class="score-box">
+        Score: <span id="score">0</span>
+    </div>
+
+    <div class="task-buttons">
+        <button id="fillInButton" class="task-button" onclick="showTask('fillIn')">Fill in the Blanks</button>
+        <button id="translationButton" class="task-button" onclick="showTask('translation')">Translate Sentences</button>
+        <button id="wordOrderButton" class="task-button" onclick="showTask('wordOrder')">Word Order</button>
+        <button id="verbFormsButton" class="task-button" onclick="showTask('verbForms')">Past Simple (V2)</button>
+    </div>
+    
+    <div id="fillIn" class="task-section active">
+        <h2>Fill in the Blanks (Past Simple)</h2>
+        <p>Complete the sentences by writing the correct form of the Past Simple Tense in the box (e.g., **went** or **didn't see**).</p>
+        <form id="fillInForm"></form>
+        <button type="button" class="check-button" onclick="checkFillIn()">Check Answers</button>
+        <div id="fillInFeedback" class="feedback" style="display: none;"></div>
+    </div>
+
+    <div id="translation" class="task-section">
+        <h2>Translate Sentences (Past Simple)</h2>
+        <p>Translate the following Hungarian sentences into English using the Past Simple Tense.</p>
+        <form id="translationForm"></form>
+        <button type="button" class="check-button" onclick="checkTranslation()">Check Answers</button>
+        <div id="translationFeedback" class="feedback" style="display: none;"></div>
+    </div>
+
+    <div id="wordOrder" class="task-section">
+        <h2>Word Order</h2>
+        <p>Put the words in the correct order to form a Past Simple sentence.</p>
+        <form id="wordOrderForm"></form>
+        <button type="button" class="check-button" onclick="checkWordOrder()">Check Answers</button>
+        <div id="wordOrderFeedback" class="feedback" style="display: none;"></div>
+    </div>
+
+    <div id="verbForms" class="task-section">
+        <h2>Past Simple (V2) Practice</h2>
+        <p>Provide the Past Simple (V2) form for the following verbs.</p>
+        <form id="verbFormsForm"></form>
+        <button type="button" class="check-button" onclick="checkVerbForms()">Check Answers</button>
+        <div id="verbFormsFeedback" class="feedback" style="display: none;"></div>
+    </div>
+
+</div>
+
+<script>
+    let score = 0;
+    const scoreElement = document.getElementById('score');
+    const tasks = ['fillIn', 'translation', 'wordOrder', 'verbForms'];
+
+    // --- 1. DATABASE (The full verb list is retained for the V2 practice) ---
+
+    const verbListV2 = [
+        { v1: "be", v2: "was" }, { v1: "become", v2: "became" }, { v1: "begin", v2: "began" },
+        { v1: "bite", v2: "bit" }, { v1: "break", v2: "broke" }, { v1: "bring", v2: "brought" },
+        { v1: "build", v2: "built" }, { v1: "buy", v2: "bought" }, { v1: "catch", v2: "caught" },
+        { v1: "come", v2: "came" }, { v1: "do", v2: "did" }, { v1: "draw", v2: "drew" },
+        { v1: "drink", v2: "drank" }, { v1: "drive", v2: "drove" }, { v1: "eat", v2: "ate" },
+        { v1: "fall", v2: "fell" }, { v1: "feel", v2: "felt" }, { v1: "fight", v2: "fought" },
+        { v1: "find", v2: "found" }, { v1: "fly", v2: "flew" }, { v1: "give", v2: "gave" },
+        { v1: "go", v2: "went" }, { v1: "grow", v2: "grew" }, { v1: "have", v2: "had" },
+        { v1: "hear", v2: "heard" }, { v1: "hide", v2: "hid" }, { v1: "hit", v2: "hit" },
+        { v1: "keep", v2: "kept" }, { v1: "know", v2: "knew" }, { v1: "leave", v2: "left" },
+        { v1: "lose", v2: "lost" }, { v1: "make", v2: "made" }, { v1: "pay", v2: "paid" },
+        { v1: "put", v2: "put" }, { v1: "read", v2: "read" }, { v1: "ride", v2: "rode" },
+        { v1: "run", v2: "ran" }, { v1: "say", v2: "said" }, { v1: "see", v2: "saw" },
+        { v1: "sell", v2: "sold" }, { v1: "send", v2: "sent" }, { v1: "set", v2: "set" },
+        { v1: "sing", v2: "sang" }, { v1: "sink", v2: "sank" }, { v1: "sit", v2: "sat" },
+        { v1: "speak", v2: "spoke" }, { v1: "spend", v2: "spent" }, { v1: "stand", v2: "stood" },
+        { v1: "steal", v2: "stole" }, { v1: "swim", v2: "swam" }, { v1: "take", v2: "took" },
+        { v1: "teach", v2: "taught" }, { v1: "tell", v2: "told" }, { v1: "think", v2: "thought" },
+        { v1: "throw", v2: "threw" }, { v1: "understand", v2: "understood" }, { v1: "wake", v2: "woke" },
+        { v1: "wear", v2: "wore" }, { v1: "win", v2: "won" }, { v1: "write", v2: "wrote" }
+    ];
+    
+    // --- FILL IN THE BLANKS (Past Simple) - Static sentences based on user request ---
+    const fillInData = [
+        { sentence: "I ___ an apple. (eat)", answer: "ate" },
+        { sentence: "He ___ the car. (wash)", answer: "washed" },
+        { sentence: "A dog ___ me. (bite)", answer: "bit" },
+        { sentence: "We ___ to the park yesterday. (go)", answer: "went" },
+        { sentence: "She ___ a letter to her friend. (write)", answer: "wrote" },
+        { sentence: "They ___ the movie last night. (see)", answer: "saw" },
+        { sentence: "You ___ a new phone last week. (buy)", answer: "bought" },
+        { sentence: "My mother ___ dinner for everyone. (make)", answer: "made" },
+        { sentence: "He ___ the door by accident. (break)", answer: "broke" },
+        { sentence: "I ___ very tired after work. (feel)", answer: "felt" },
+        { sentence: "The teacher ___ the students a story. (tell)", answer: "told" },
+        { sentence: "We ___ the bus to school. (take)", answer: "took" },
+        { sentence: "She ___ English last night. (study)", answer: "studied" },
+        { sentence: "They ___ in the pool yesterday. (swim)", answer: "swam" },
+        { sentence: "He ___ his homework. (do)", answer: "did" },
+        { sentence: "I ___ my keys in the car. (leave)", answer: "left" },
+        { sentence: "We ___ the match easily. (win)", answer: "won" },
+        { sentence: "She ___ a song for us. (sing)", answer: "sang" },
+        { sentence: "They ___ to bed early. (go)", answer: "went" },
+        { sentence: "He ___ breakfast at 7 a.m. (eat)", answer: "ate" }
+    ];
+
+    // --- TRANSLATION TASK (Past Simple) ---
+    const translationData = [
+        { hungarian: `1. Megírtam a levelet tegnap. (write)`, english: `I wrote the letter yesterday.` },
+        { hungarian: `2. Ő (lány) nem evett semmit tegnap. (eat)`, english: `She did not eat anything yesterday.` },
+        { hungarian: `3. Láttuk a filmet a múlt héten. (see)`, english: `We saw the movie last week.` },
+        { hungarian: `4. Elmentek Párizsba 2020-ban. (go)`, english: `They went to Paris in 2020.` },
+        { hungarian: `5. Megcsináltad a házi feladatot? (do)`, english: `Did you do the homework?` },
+        { hungarian: `6. A kisfiú eltörte a vázát. (break)`, english: `The little boy broke the vase.` },
+        { hungarian: `7. Nem jöttek vissza időben. (come)`, english: `They did not come back in time.` },
+        { hungarian: `8. Megtaláltam a kulcsomat a múlt éjszaka! (find)`, english: `I found my key last night!` },
+        { hungarian: `9. Elvesztettem a telefonomat a minap. (lose)`, english: `I lost my phone the other day.` },
+        { hungarian: `10. Vásároltak egy új házat. (buy)`, english: `They bought a new house.` }
+    ];
+
+    // --- WORD ORDER TASK (Past Simple) ---
+    const wordOrderData = [
+        { words: ["yesterday", "arrived", "late", "we"], answer: "We arrived late yesterday." },
+        { words: ["the news", "did", "hear", "you", "not"], answer: "You did not hear the news." },
+        { words: ["dinner", "ate", "they", "at 7pm"], answer: "They ate dinner at 7pm." },
+        { words: ["phone", "broke", "my", "I", "dropped"], answer: "I dropped my phone broke." },
+        { words: ["the email", "write", "she", "did", "not"], answer: "She did not write the email." },
+        { words: ["who", "the cup", "broke"], answer: "Who broke the cup?" },
+        { words: ["a new", "we", "bought", "car", "last year"], answer: "We bought a new car last year." },
+        { words: ["the dog", "away", "ran"], answer: "The dog ran away." },
+        { words: ["the film", "when", "finish", "did"], answer: "When did the film finish?" },
+        { words: ["something", "I", "told", "you"], answer: "I told you something." }
+    ];
+
+    // --- VERB FORMS TASK (Past Simple V2) ---
+    const verbFormsData = [
+        { v1: "take", v2: "took", type: "select", options: ["take", "took", "taked"] },
+        { v1: "write", v2: "wrote", type: "text" },
+        { v1: "go", v2: "went", type: "text" },
+        { v1: "see", v2: "saw", type: "select", options: ["saw", "seen", "seed"] },
+        { v1: "drink", v2: "drank", type: "text" },
+        { v1: "begin", v2: "began", type: "text" },
+        { v1: "break", v2: "broke", type: "text" },
+        { v1: "buy", v2: "bought", type: "select", options: ["buyed", "bought", "buyt"] },
+        { v1: "teach", v2: "taught", type: "text" },
+        { v1: "wear", v2: "wore", type: "text" },
+        { v1: "make", v2: "made", type: "text" },
+        { v1: "pay", v2: "paid", type: "text" },
+        { v1: "run", v2: "ran", type: "select", options: ["ran", "run", "ranned"] },
+        { v1: "think", v2: "thought", type: "text" },
+        { v1: "throw", v2: "threw", type: "text" },
+    ];
+    
+    // --- 2. GENERAL FUNCTIONS ---
+
+    // Select random elements from an array
+    function getRandomElements(arr, count) {
+        const shuffled = [...arr].sort(() => 0.5 - Math.random());
+        return shuffled.slice(0, count);
+    }
+    
+    // Task switcher and dynamic generation
+    function showTask(taskName) {
+        tasks.forEach(task => {
+            const element = document.getElementById(task);
+            if (element) {
+                element.classList.remove('active');
+            }
+        });
+        const currentTask = document.getElementById(taskName);
+        if (currentTask) {
+            currentTask.classList.add('active');
+            document.getElementById(taskName + 'Feedback').style.display = 'none';
+            generateTask(taskName); 
+        }
+    }
+
+    // Dynamic task generator
+    function generateTask(taskName) {
+        const form = document.getElementById(taskName + 'Form');
+        form.innerHTML = '';
+        const numItems = 5; 
+        let items = [];
+
+        if (taskName === 'fillIn') {
+            items = getRandomElements(fillInData, numItems);
+            items.forEach((item, index) => {
+                const parts = item.sentence.split('___');
+                form.innerHTML += `
+                    <div class="task-item" id="fillIn_item_${index}">
+                        <span>${index + 1}. ${parts[0]}</span>
+                        <input type="text" id="fillIn_${index}" data-answer="${item.answer.toLowerCase()}" data-index="${index}" placeholder="V2 or didn't + V1">
+                        <span>${parts[1]}</span>
+                    </div>
+                `;
+            });
+        } else if (taskName === 'translation') {
+            items = getRandomElements(translationData, numItems);
+            items.forEach((item, index) => {
+                form.innerHTML += `
+                    <div class="task-item" id="translation_item_${index}">
+                        <label for="translation_${index}">${item.hungarian}</label>
+                        <input type="text" id="translation_${index}" data-answer="${item.english.toLowerCase().replace(/[.,?!]/g, '').replace(/\s+/g, ' ')}" data-index="${index}" placeholder="Your English translation">
+                    </div>
+                `;
+            });
+        } else if (taskName === 'wordOrder') {
+            items = getRandomElements(wordOrderData, numItems);
+            items.forEach((item, index) => {
+                const shuffledWords = [...item.words].sort(() => 0.5 - Math.random()).join(' / ');
+                form.innerHTML += `
+                    <div class="task-item" id="wordOrder_item_${index}">
+                        <label for="wordOrder_${index}">${index + 1}. (${shuffledWords})</label>
+                        <input type="text" id="wordOrder_${index}" data-answer="${item.answer.toLowerCase().replace(/[.,?!]/g, '').replace(/\s+/g, ' ')}" data-index="${index}" placeholder="Enter the correct sentence order">
+                    </div>
+                `;
+            });
+        } else if (taskName === 'verbForms') {
+             items = getRandomElements(verbFormsData, numItems);
+             items.forEach((item, index) => {
+                let inputElement;
+                if (item.type === 'text') {
+                    inputElement = `<input type="text" id="verbForm_${index}" data-answer="${item.v2.toLowerCase()}" data-index="${index}" placeholder="V2 form (Past Simple)">`;
+                } else if (item.type === 'select') {
+                    const optionsHtml = item.options.map(opt => `<option value="${opt.toLowerCase()}">${opt}</option>`).join('');
+                    inputElement = `
+                        <select id="verbForm_${index}" data-answer="${item.v2.toLowerCase()}" data-index="${index}">
+                            <option value="">Select V2</option>
+                            ${optionsHtml}
+                        </select>
+                    `;
+                }
+                form.innerHTML += `
+                    <div class="task-item" id="verbForm_item_${index}">
+                        <span>${index + 1}. ${item.v1}</span>
+                        ${inputElement}
+                    </div>
+                `;
+            });
+        }
+    }
+    
+    // --- 3. CHECKING FUNCTIONS (Scoring, Feedback, Solution) ---
+
+    function checkAnswers(formId, feedbackId) {
+        const form = document.getElementById(formId);
+        const inputs = form.querySelectorAll('input[data-answer], select[data-answer]');
+        let totalCurrentCorrect = 0;
+        let allCorrect = true;
+        
+        inputs.forEach(input => {
+            const itemElement = input.closest('.task-item');
+            
+            // Skip if already scored
+            if (input.dataset.scored === 'true') {
+                 totalCurrentCorrect++;
+                 input.style.backgroundColor = '#e6ffe6';
+                 return;
+            }
+
+            // Skip if disabled (meaning solution was already shown)
+            if (input.disabled) {
+                allCorrect = false;
+                return;
+            }
+
+            // Normalise input for comparison
+            const userAnswer = input.value.trim().toLowerCase().replace(/[.,?!]/g, '').replace(/\s+/g, ' ');
+            const correctAnswer = input.getAttribute('data-answer').trim().toLowerCase().replace(/[.,?!]/g, '').replace(/\s+/g, ' ');
+
+            if (userAnswer === correctAnswer) {
+                // Correct answer: score and disable
+                score++;
+                input.dataset.scored = 'true';
+                totalCurrentCorrect++;
+                input.style.backgroundColor = '#e6ffe6'; 
+                input.disabled = true; 
+
+            } else {
+                // Wrong answer: show solution and disable (no re-entry for points)
+                allCorrect = false;
+                input.style.backgroundColor = '#ffe6e6'; 
+                input.disabled = true; 
+                
+                // Show correct solution
+                if (!itemElement.querySelector('.correct-answer')) {
+                    const correction = document.createElement('span');
+                    correction.className = 'correct-answer';
+                    correction.textContent = `Correct: ${input.getAttribute('data-answer')}`;
+                    itemElement.appendChild(correction);
+                }
+            }
+        });
+        
+        scoreElement.textContent = score;
+
+        // Feedback Logic
+        const feedbackElement = document.getElementById(feedbackId);
+        feedbackElement.style.display = 'block';
+
+        if (allCorrect && inputs.length > 0 && Array.from(inputs).every(i => i.dataset.scored === 'true')) {
+            feedbackElement.className = 'feedback excellent';
+            feedbackElement.textContent = 'Excellent! You got all ' + inputs.length + ' correct answers!';
+        } else if (totalCurrentCorrect > 0) {
+             const scoredAny = Array.from(inputs).some(i => i.dataset.scored === 'true');
+             if (scoredAny) {
+                feedbackElement.className = 'feedback excellent';
+                feedbackElement.textContent = 'Excellent! (' + totalCurrentCorrect + ' correct)';
+             } else {
+                feedbackElement.className = 'feedback try-again';
+                feedbackElement.textContent = 'Try again! You have ' + totalCurrentCorrect + ' correct answers.';
+             }
+        } else {
+             feedbackElement.className = 'feedback try-again';
+             feedbackElement.textContent = 'Try again!';
+        }
+    }
+
+    // Specific checkers
+    function checkFillIn() {
+        checkAnswers('fillInForm', 'fillInFeedback');
+    }
+
+    function checkTranslation() {
+        checkAnswers('translationForm', 'translationFeedback');
+    }
+
+    function checkWordOrder() {
+        checkAnswers('wordOrderForm', 'wordOrderFeedback');
+    }
+
+    function checkVerbForms() {
+        checkAnswers('verbFormsForm', 'verbFormsFeedback');
+    }
+
+    // --- 4. INITIALIZATION ---
+
+    document.addEventListener('DOMContentLoaded', () => {
+        showTask('fillIn');
+    });
+</script>
+
+</body>
+</html>
